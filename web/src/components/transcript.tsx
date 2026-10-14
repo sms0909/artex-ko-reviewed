@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { api } from "@/lib/api";
+import { localizeTerminalResult } from "@/lib/locale/result-ko";
 import type { Activity, InterceptPending } from "@/lib/types";
 
 // ---- per-agent lane color (planner + work#1/#2/#3 …) ---------------------------
@@ -413,7 +414,11 @@ function ToolBlock({
     ).then((parts) => {
       if (!live) return;
       setDetail(
-        segs.map((x, i) => `【${x.label}】\n${x.cmd ? toolInputText(toolName, parts[i]) : parts[i]}`).join("\n\n"),
+        segs
+          .map(
+            (x, i) => `【${x.label}】\n${x.cmd ? toolInputText(toolName, parts[i]) : localizeTerminalResult(parts[i])}`,
+          )
+          .join("\n\n"),
       );
       loadedKey.current = detailKey;
     });
@@ -680,9 +685,9 @@ function AnswerBlock({ step, getDetail }: { step: Activity; getDetail: (seq: num
         }
       >
         {step.is_error ? (
-          <span className="whitespace-pre-wrap">{full ?? step.summary}</span>
+          <span className="whitespace-pre-wrap">{localizeTerminalResult(full ?? step.summary)}</span>
         ) : (
-          <Markdown text={full ?? step.summary} />
+          <Markdown text={localizeTerminalResult(full ?? step.summary)} />
         )}
       </div>
       <ActivityTime ts={step.ts} />
